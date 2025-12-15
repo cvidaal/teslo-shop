@@ -5,5 +5,12 @@ const tesloApi = axios.create({
 });
 
 //TODO: Interceptores
+tesloApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`; // Se manda el token en cada request
+  }
+  return config;
+});
 
 export { tesloApi };
