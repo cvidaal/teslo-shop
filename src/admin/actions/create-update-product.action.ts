@@ -23,10 +23,8 @@ export const createUpdateProductAction = async (
 
   const imagesToSave = images.map((image) => {
     if (image.includes("http")) return image.split("/").pop();
-    return images;
+    return image;
   });
-
-  console.log({ files });
 
   const { data } = await tesloApi<Product>({
     url: isCreating ? "/products" : `/products/${id}`,
