@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Search, Bell, MessageSquare, Settings } from "lucide-react";
 import { useAuthStore } from "@/auth/store/auth.store";
+import { useNavigate, useSearchParams } from "react-router";
 
 export const AdminHeader: React.FC = () => {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams(); // Segmentos opcionales
+
+  const inputRef = useRef<HTMLInputElement>(null); // Tomar valor del input
+  const query = searchParams.get("query") || "";
+
+  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+
+    const query = inputRef.current?.value.trim();
+
+    if (!query) {
+      navigate("/admin/products");
+      return;
+    }
+
+    navigate(`/admin/products?query=${query}`);
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4 h-18">
@@ -16,8 +35,10 @@ export const AdminHeader: React.FC = () => {
               size={20}
             />
             <input
-              type="text"
-              placeholder="Search..."
+              ref={inputRef}
+              placeholder="Buscar productos..."
+              onKeyDown={handleSearch}
+              defaultValue={query}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
           </div>
