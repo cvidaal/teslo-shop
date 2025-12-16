@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from "react-router";
 export const AdminHeader: React.FC = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams(); // Segmentos opcionales
+  const [searchParams] = useSearchParams(); // Segmentos opcionales
 
   const inputRef = useRef<HTMLInputElement>(null); // Tomar valor del input
   const query = searchParams.get("query") || "";

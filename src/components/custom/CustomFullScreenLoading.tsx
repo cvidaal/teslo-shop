@@ -1,5 +1,3 @@
-import React from "react";
-
 export const CustomFullScreenLoading = () => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 z-50">
