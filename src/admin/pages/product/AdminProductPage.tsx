@@ -18,7 +18,11 @@ export const AdminProductPage = () => {
       : "Aquí puedes editar el producto.";
 
   // Submit con mutación de tanStack Query
-  const handleSubmit = async (productLike: Partial<Product>) => {
+  const handleSubmit = async (
+    productLike: Partial<Product> & { files?: File[] }
+  ) => {
+    console.log(productLike);
+
     await mutation.mutateAsync(productLike, {
       onSuccess: (data) => {
         toast.success("Producto guardado correctamente", {

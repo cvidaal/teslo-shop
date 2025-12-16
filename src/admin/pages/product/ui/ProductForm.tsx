@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import type { Product, Size } from "@/interfaces/product.interface";
 import { cn } from "@/lib/utils";
 import { X, SaveAll, Tag, Upload, Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 
@@ -13,11 +13,17 @@ interface Props {
   product: Product;
 
   // Methods
-  onSubmit: (productLike: Partial<Product>) => Promise<void>;
+  onSubmit: (
+    productLike: Partial<Product> & { files?: File[] }
+  ) => Promise<void>;
   isSaving: boolean;
 }
 
 const availableSizes: Size[] = ["XS", "S", "M", "L", "XL", "XXL"];
+
+interface FormInputs extends Product {
+  files?: File[];
+}
 
 export const ProductForm = ({
   title,
@@ -30,6 +36,11 @@ export const ProductForm = ({
 
   const [dragActive, setDragActive] = useState(false);
   const newTagRef = useRef<HTMLInputElement>(null);
+  const [files, setFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    setFiles([]);
+  }, [product]);
 
   // Formulario
   const {
@@ -39,7 +50,7 @@ export const ProductForm = ({
     getValues,
     setValue,
     watch,
-  } = useForm({
+  } = useForm<FormInputs>({
     defaultValues: product,
   });
 
@@ -89,12 +100,21 @@ export const ProductForm = ({
     e.stopPropagation();
     setDragActive(false);
     const files = e.dataTransfer.files;
-    console.log(files);
+
+    if (!files) return;
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+    const currentFiles = getValues("files") || [];
+    setValue("files", [...currentFiles, ...Array.from(files)]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log(files);
+    if (!files) return;
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+    const currentFiles = getValues("files") || [];
+    setValue("files", [...currentFiles, ...Array.from(files)]);
   };
 
   return (
@@ -436,6 +456,30 @@ export const ProductForm = ({
                       </p>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Imagenes por cargar */}
+              <div
+                className={cn("mt-6 space-y-3", { hidden: files.length === 0 })}
+              >
+                <h3 className="text-sm font-medium text-slate-700">
+                  Imágenes por cargar
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {files.map((file, index) => (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Product"
+                      key={file.name + index}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  ))}
+                  {files.length === 0 && (
+                    <p className="text-sm text-slate-500">
+                      No hay imágenes por cargar
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
