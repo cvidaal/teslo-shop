@@ -21,10 +21,10 @@ export const createUpdateProductAction = async (
     images.push(...newImageNames);
   }
 
-  // const imagesToSave = images.map((image) => {
-  //   if (image.includes("http")) return image.split("/").pop();
-  // return images;
-  // });
+  const imagesToSave = images.map((image) => {
+    if (image.includes("http")) return image.split("/").pop();
+    return images;
+  });
 
   console.log({ files });
 
@@ -33,7 +33,7 @@ export const createUpdateProductAction = async (
     method: isCreating ? "POST" : "PATCH",
     data: {
       ...rest,
-      images: images,
+      images: imagesToSave,
     },
   });
 
